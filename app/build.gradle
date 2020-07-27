@@ -13,6 +13,10 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+    dexOptions {
+        incremental true
+        javaMaxHeapSize "4g"
+    }
 
     buildTypes {
         release {

@@ -40,8 +40,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     {
         String Query = "Select * from " + TableName;
         Cursor cursor = mydatabase.rawQuery(Query, null);
+        cursor.moveToFirst();
         int uIndex = cursor.getColumnIndex(dbfield);
-        while(cursor != null && cursor.moveToFirst())
+        int pIndex = cursor.getColumnIndex("password");
+        while(cursor != null)
         {
             if(cursor.getString(uIndex).matches(fieldValue))
             {
@@ -60,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String userNameText = userName.getText().toString();
         String pwd = pswrd.getText().toString();
         Cursor cursor = mydatabase.rawQuery("select * from login", null);
+        cursor.moveToFirst();
         int uIndex = cursor.getColumnIndex("username");
         int pIndex = cursor.getColumnIndex("password");
         boolean flag = false;
@@ -68,11 +71,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "Username and Password are required", Toast.LENGTH_SHORT).show();
         }
         else {
-            while (cursor != null && cursor.moveToFirst()) {
+            while (cursor != null) {
+                Log.i("Name",cursor.getString(uIndex));
+                Log.i("Password",cursor.getString(pIndex));
                 if (cursor.getString(uIndex).matches(userNameText) && cursor.getString(pIndex).matches(pwd)) {
                     flag = true;
                     Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show();
-                    showUsers();
                     cursor.close();
                     break;
                 }
@@ -82,7 +86,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (!flag)
             {
                 Toast.makeText(this, "Username/Password Incorrect!!", Toast.LENGTH_SHORT).show();
+                userName.setText("");
+                pswrd.setText("");
             }
+            else
+                showUsers();
         }
     }
     public void signup(View view)
@@ -126,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ImageView imageView = (ImageView)findViewById(R.id.imageView);
 
         mydatabase = this.openOrCreateDatabase("login",MODE_PRIVATE,null);
-        mydatabase.execSQL("CREATE TABLE IF NOT EXISTS login (username VARCHAR, password VARCHAR)");
+        mydatabase.execSQL("CREATE TABLE IF NOT EXISTS login (username VARCHAR, password VARCHAR, image BLOB)");
 
         userName = (EditText) findViewById(R.id.userName);
         pswrd = (EditText) findViewById(R.id.password);
